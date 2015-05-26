@@ -37,6 +37,9 @@ class Bullet:
         self.y = y
         self.vx = vx # velocity on x axis
         self.vy = vy # velocity on y axis
+    def move(self):
+        self.x += self.vx
+        self.y += self.vy
     
 # Ship Class
 class Ship:
@@ -72,6 +75,8 @@ def right_button_callback(right):
     nave.move(-1,0)
     return None
     
+def fire_button_callback(fire):
+    return None
 ###############################################
 # Raspberry Pi hardware Configuration
 ###############################################
@@ -80,15 +85,21 @@ DC = 23
 RST = 24
 SPI_PORT = 0
 SPI_DEVICE = 0
+
 # Raspberry Pi GPIO config:
 left = 18    # left button port
 right = 17  # right button port
+fire = 22   # shooting button
+
 GPIO.setmode(GPIO.BCM) # set GPIO numeration label
 GPIO.setup(left, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(right, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(fire, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
 # Define input channel for the callback, something like an interruption
 GPIO.add_event_detect(left, GPIO.FALLING, callback = left_button_callback, bouncetime = 100)
 GPIO.add_event_detect(right, GPIO.FALLING, callback = right_button_callback, bouncetime = 100)
+GPIO.add_event_detect(fire, GPIO.FALLING, callback = fire_button_callback, bouncetime = 100)
 
 ###############################################
 # Nokia Display Setup
