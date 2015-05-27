@@ -26,6 +26,9 @@ from PIL import ImageFont
 debug = True
 w = LCD.LCDWIDTH/2
 h = LCD.LCDHEIGHT/2
+bullet_list = []
+bullet_vx = 0
+bullet_vy = -1
 
 ###############################################
 # Classes
@@ -76,6 +79,10 @@ def right_button_callback(right):
     return None
     
 def fire_button_callback(fire):
+    global bullet_list, nave, bullet_vx, bullet_vy
+    #time.sleep(.5)    
+    bullet_list.append(Bullet(nave.position[0], nave.position[1]-4, bullet_vx, bullet_vy))
+    if debug: print "BAWG!"
     return None
 ###############################################
 # Raspberry Pi hardware Configuration
@@ -99,7 +106,7 @@ GPIO.setup(fire, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 # Define input channel for the callback, something like an interruption
 GPIO.add_event_detect(left, GPIO.FALLING, callback = left_button_callback, bouncetime = 100)
 GPIO.add_event_detect(right, GPIO.FALLING, callback = right_button_callback, bouncetime = 100)
-GPIO.add_event_detect(fire, GPIO.FALLING, callback = fire_button_callback, bouncetime = 100)
+GPIO.add_event_detect(fire, GPIO.FALLING, callback = fire_button_callback, bouncetime = 200)
 
 ###############################################
 # Nokia Display Setup
@@ -129,10 +136,24 @@ draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
 ###############################################
 try:
     while (True):
+        bullets_index = []
         # Clear Display before making a new frame
         draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
+        # Draw the ship
         draw.polygon(nave.vertices, outline=0, fill = 255)
-    
+        #Draw the bulets
+        for bullet in bullet_list:
+            bullet.move()
+            if bullet.y >=0: 
+                draw.line((bullet.x, bullet.y, bullet.x, bullet.y-1), fill = 0)
+            else: # bullet out of display range
+                bullets_index.append(bullet_list.index(bullet))
+        # Remove bullets that are out of display's range
+        for i in bullets_index:
+            bullet_list.pop(i)
+        
+        #if debug: print bullet_list
+        
         # Display image.
         disp.image(image)
         disp.display()
