@@ -24,8 +24,8 @@ from PIL import ImageFont
 # Global Variables
 ###############################################
 debug = True
-w = LCD.LCDWIDTH/2
-h = LCD.LCDHEIGHT/2
+w = LCD.LCDWIDTH
+h = LCD.LCDHEIGHT
 bullet_list = []
 bullet_vx = 0
 bullet_vy = -1
@@ -64,7 +64,7 @@ class Ship:
         self.vertices = (self.position[0]-2,self.position[1]+4, self.position[0], self.position[1]-4, self.position[0]+2, self.position[1]+4)
 
 # Creates a ship
-nave = Ship(np.array([w,h]), 0.)
+nave = Ship(np.array([w/2,h-8]), 0.)
 ###############################################
 # Functions
 ###############################################
@@ -144,7 +144,7 @@ try:
         #Draw the bulets
         for bullet in bullet_list:
             bullet.move()
-            if bullet.y >=0: 
+            if bullet.y >=0: # bullet still on the screen
                 draw.line((bullet.x, bullet.y, bullet.x, bullet.y-1), fill = 0)
             else: # bullet out of display range
                 bullets_index.append(bullet_list.index(bullet))
