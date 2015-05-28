@@ -194,9 +194,6 @@ try:
         #if debug: print bullet_list
         
         # Display image.
-#        disp.image(image)
-#        disp.display()
-#        time.sleep(.001)
         show_image(disp, image)
 
 # Press CTRL+C to stop the main routine
