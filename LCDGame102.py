@@ -95,12 +95,14 @@ def enemy_list():
     
 def left_button_callback():
     global nave
-    nave.move(-1,0)
+    if nave.vertices[0] > 0:
+        nave.move(-1,0)
     return None
     
 def right_button_callback():
     global nave
-    nave.move(1,0)
+    if nave.vertices[4] < w:
+        nave.move(1,0)
     return None
     
 def fire_button_callback(fire):
