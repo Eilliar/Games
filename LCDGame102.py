@@ -37,15 +37,15 @@ Welcome = True  #Show welcome screen
 # Classes
 ###############################################
 # Enemies Class
-class Enemies:
+class Enemy:
     def __init__(self,position):
         assert type(position) is np.ndarray, "Position must be an numpy array."
         self.position = position
-        
+        self.vertices = (position[0],position[1], position[0]+5, position[1]+5)
+
     def move(self, delta_x, delta_y):
         self.position += np.array([delta_x,delta_y])
-        self.vertices = (self.position[0]-2,self.position[1]+4, self.position[0], self.position[1]-4, self.position[0]+2, self.position[1]+4)
-
+        self.vertices = (self.position[0],self.position[1], self.position[0]+5, self.position[1]+5)
     
 
 # Bullet Class
@@ -80,9 +80,19 @@ class Ship:
 
 # Creates a ship
 nave = Ship(np.array([w/2,h-8]), 0.)
+
 ###############################################
 # Functions
 ###############################################
+def enemy_list():
+    """
+    Creates a list with all enemies in the game
+    """
+    enemies = []
+    for i in range(0, 10): 
+        enemies.append(Enemy(np.array([i*5+i*3,2]))) 
+    return enemies
+    
 def left_button_callback():
     global nave
     nave.move(-1,0)
@@ -172,7 +182,7 @@ draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
 ###############################################
 # Main Loop
 ###############################################
-
+invaders = enemy_list()
 try:
     while (True):
         # Welcome Screen
@@ -195,7 +205,10 @@ try:
         # Clear Display before making a new frame
         draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
         # Draw the ship
-        draw.polygon(nave.vertices, outline=0, fill = 255)
+        draw.polygon(nave.vertices, outline = 0, fill = 255)
+        # Draw Enemy
+        for enemy in invaders:
+            draw.rectangle(enemy.vertices, outline = 0, fill = 0)
         #Draw the bulets
         for bullet in bullet_list:
             bullet.move()
