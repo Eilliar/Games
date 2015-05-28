@@ -36,6 +36,18 @@ Welcome = True  #Show welcome screen
 ###############################################
 # Classes
 ###############################################
+# Enemies Class
+class Enemies:
+    def __init__(self,position):
+        assert type(position) is np.ndarray, "Position must be an numpy array."
+        self.position = position
+        
+    def move(self, delta_x, delta_y):
+        self.position += np.array([delta_x,delta_y])
+        self.vertices = (self.position[0]-2,self.position[1]+4, self.position[0], self.position[1]-4, self.position[0]+2, self.position[1]+4)
+
+    
+
 # Bullet Class
 class Bullet:
     def __init__(self, x,y,vx,vy):
@@ -71,12 +83,12 @@ nave = Ship(np.array([w/2,h-8]), 0.)
 ###############################################
 # Functions
 ###############################################
-def left_button_callback(left):
+def left_button_callback():
     global nave
     nave.move(-1,0)
     return None
     
-def right_button_callback(right):
+def right_button_callback():
     global nave
     nave.move(1,0)
     return None
@@ -108,7 +120,7 @@ def show_image(nokia, image):
     # Display image.
     nokia.image(image)
     nokia.display()
-    time.sleep(.001)
+    time.sleep(.01)
     return None
 ###############################################
 # Raspberry Pi hardware Configuration
@@ -132,8 +144,6 @@ GPIO.setup(fire, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(b_button, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 # Define input channel for the callback, something like an interruption
-GPIO.add_event_detect(left, GPIO.FALLING, callback = left_button_callback, bouncetime = 100)
-GPIO.add_event_detect(right, GPIO.FALLING, callback = right_button_callback, bouncetime = 100)
 GPIO.add_event_detect(fire, GPIO.FALLING, callback = fire_button_callback, bouncetime = 200)
 
 ###############################################
@@ -176,6 +186,12 @@ try:
                 Welcome = False
                 
         bullets_index = []
+        # Check left and right buttons and move the ship
+        if (GPIO.input(left) == False):
+            left_button_callback()
+        if (GPIO.input(right) == False):
+            right_button_callback()
+            
         # Clear Display before making a new frame
         draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
         # Draw the ship
@@ -196,7 +212,7 @@ try:
         # Display image.
         show_image(disp, image)
 
-# Press CTRL+C to stop the main routine
+# Press CTRL+C to stop the game
 except KeyboardInterrupt:
     # Draw welcome screen
     welcome_draw(draw)
