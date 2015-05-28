@@ -70,12 +70,12 @@ nave = Ship(np.array([w/2,h-8]), 0.)
 ###############################################
 def left_button_callback(left):
     global nave
-    nave.move(1,0)
+    nave.move(-1,0)
     return None
     
 def right_button_callback(right):
     global nave
-    nave.move(-1,0)
+    nave.move(1,0)
     return None
     
 def fire_button_callback(fire):
