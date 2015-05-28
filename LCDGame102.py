@@ -1,9 +1,9 @@
 """
-First Program to build a game with Nokia LCD Display
-Display a ship and shoot
+Second Program to build a game with Nokia LCD Display
+Add Welcome screen and some rocks
 
 Author: Bruno Godoi Eilliar
-Date : May 27, 2015
+Date : May 28, 2015
 
 Dependencies:
 - Adafruit Nokia LCD library
@@ -97,12 +97,14 @@ SPI_DEVICE = 0
 # Raspberry Pi GPIO config:
 left = 18    # left button port
 right = 17  # right button port
-fire = 22   # shooting button
+fire = 22   # shooting button (A Button)
+b_button = 27   #B Button
 
 GPIO.setmode(GPIO.BCM) # set GPIO numeration label
 GPIO.setup(left, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(right, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(fire, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(b_button, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 # Define input channel for the callback, something like an interruption
 GPIO.add_event_detect(left, GPIO.FALLING, callback = left_button_callback, bouncetime = 100)
@@ -135,8 +137,24 @@ draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
 ###############################################
 # Main Loop
 ###############################################
+Welcome = True
 try:
     while (True):
+        # Welcome Screen
+        while (Welcome):
+            # Load default font.
+            font = ImageFont.load_default()
+            # Write some text.
+            draw.text((6,3), '-=Invaders=-', font=font)
+            draw.text((1,37), 'By Bruno G. E.', font=font)
+            # Display image.
+            disp.image(image)
+            disp.display()
+            time.sleep(.001)
+            if (GPIO.input(b_button) == False):
+                if debug: print "B pressed"
+                Welcome = False
+                
         bullets_index = []
         # Clear Display before making a new frame
         draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
@@ -162,4 +180,12 @@ try:
 
 # Press CTRL+C to stop the main routine
 except KeyboardInterrupt:
+    # Clear Display before making a new frame
+    draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
+    draw.text((6,3), '-=Invaders=-', font=font)
+    draw.text((1,37), 'By Bruno G. E.', font=font)
+    # Display image.
+    disp.image(image)
+    disp.display()
+    time.sleep(.001)
     pass
