@@ -30,6 +30,8 @@ h = LCD.LCDHEIGHT
 bullet_list = []
 bullet_vx = 0
 bullet_vy = -1
+font = ImageFont.load_default()# Load default font.
+Welcome = True  #Show welcome screen
 
 ###############################################
 # Classes
@@ -85,6 +87,29 @@ def fire_button_callback(fire):
     bullet_list.append(Bullet(nave.position[0], nave.position[1]-4, bullet_vx, bullet_vy))
     if debug: print "BAWG!"
     return None
+    
+def welcome_draw(draw):
+    """
+    Function to draw welcome screen.
+    Inputs: draw object
+    """
+    # Draw a white filled box to clear the image.
+    draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
+    # Write some text.
+    draw.text((6,3), '-=Invaders=-', font=font)
+    draw.text((1,37), 'By Bruno G. E.', font=font)
+    return None
+    
+def show_image(nokia, image):
+    """
+    Function to show image on the display
+    Inputs: nokia-> display in use; image -> image to show
+    """
+    # Display image.
+    nokia.image(image)
+    nokia.display()
+    time.sleep(.001)
+    return None
 ###############################################
 # Raspberry Pi hardware Configuration
 ###############################################
@@ -137,20 +162,15 @@ draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
 ###############################################
 # Main Loop
 ###############################################
-Welcome = True
+
 try:
     while (True):
         # Welcome Screen
         while (Welcome):
-            # Load default font.
-            font = ImageFont.load_default()
-            # Write some text.
-            draw.text((6,3), '-=Invaders=-', font=font)
-            draw.text((1,37), 'By Bruno G. E.', font=font)
+            # Draw welcome screen
+            welcome_draw(draw)
             # Display image.
-            disp.image(image)
-            disp.display()
-            time.sleep(.001)
+            show_image(disp, image)
             if (GPIO.input(b_button) == False):
                 if debug: print "B pressed"
                 Welcome = False
@@ -174,18 +194,15 @@ try:
         #if debug: print bullet_list
         
         # Display image.
-        disp.image(image)
-        disp.display()
-        time.sleep(.001)
+#        disp.image(image)
+#        disp.display()
+#        time.sleep(.001)
+        show_image(disp, image)
 
 # Press CTRL+C to stop the main routine
 except KeyboardInterrupt:
-    # Clear Display before making a new frame
-    draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
-    draw.text((6,3), '-=Invaders=-', font=font)
-    draw.text((1,37), 'By Bruno G. E.', font=font)
+    # Draw welcome screen
+    welcome_draw(draw)
     # Display image.
-    disp.image(image)
-    disp.display()
-    time.sleep(.001)
+    show_image(disp, image)
     pass
