@@ -101,7 +101,7 @@ def left_button_callback():
     
 def right_button_callback():
     global nave
-    if nave.vertices[4] < w:
+    if nave.vertices[4] < w-1:
         nave.move(1,0)
     return None
     
@@ -172,13 +172,13 @@ disp.display()
 
 # Create blank image for drawing.
 # Make sure to create image with mode '1' for 1-bit color.
-image = Image.new('1', (LCD.LCDWIDTH, LCD.LCDHEIGHT))
+image = Image.new('1', (w, h))
 
 # Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
 
 # Draw a white filled box to clear the image.
-draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
+draw.rectangle((0,0, w-1, h-1), outline = 255, fill = 255)
 
 
 ###############################################
@@ -205,7 +205,7 @@ try:
             right_button_callback()
             
         # Clear Display before making a new frame
-        draw.rectangle((0,0,LCD.LCDWIDTH,LCD.LCDHEIGHT), outline=255, fill=255)
+        draw.rectangle((0,0, w-1,h-1), outline=0, fill=255)
         # Draw the ship
         draw.polygon(nave.vertices, outline = 0, fill = 255)
         # Draw Enemy
