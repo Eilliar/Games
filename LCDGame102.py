@@ -186,6 +186,8 @@ draw.rectangle((0,0, w-1, h-1), outline = 255, fill = 255)
 ###############################################
 invaders = enemy_list()
 loops = 0
+move_x = 0
+move_y = 0
 try:
     while (True):
         # Welcome Screen
@@ -204,14 +206,22 @@ try:
             left_button_callback()
         if (GPIO.input(right) == False):
             right_button_callback()
-        # Move Enemies at each 1s
+        
+        # Move Enemies at each ? seconds
+        move_y = 0
         if (loops == 10):
             loops = 0
+            if (invaders[-1].vertices[2] == w-1):
+                move_x = -1
+                move_y = 2
+            elif (invaders[0].vertices[0] == 0):
+                move_x = 1
+                move_y = 2
             for enemy in invaders:
-                enemy.move(1,0)
-        
+                enemy.move(move_x,move_y)
+                
         # Clear Display before making a new frame
-        draw.rectangle((0,0, w-1,h-1), outline=0, fill=255)
+        draw.rectangle((0,0, w-1,h-1), outline=255, fill=255)
         # Draw the ship
         draw.polygon(nave.vertices, outline = 0, fill = 255)
         # Draw Enemy
