@@ -86,6 +86,7 @@ nave = Ship(np.array([w/2,h-8]), 0.)
 # Functions
 ###############################################
 def enemy_hit_check(bullet, target):
+    remove_bullet = False
     for enemy in target:
         if enemy.alive:
             enemy_pos = np.array([enemy.position[0]+2.5, enemy.position[1]+2.5])
@@ -93,7 +94,8 @@ def enemy_hit_check(bullet, target):
             distance = np.sqrt((enemy_pos[0]-bullet_pos[0])**2 + (enemy_pos[1]-bullet_pos[1])**2)
             if distance <= 2.5:
                 enemy.alive = False
-    return None
+                remove_bullet = True
+    return remove_bullet
 
 def enemy_list():
     """
@@ -242,22 +244,22 @@ try:
         #Draw the bulets
         for bullet in bullet_list:
             bullet.move()
-            enemy_hit_check(bullet, invaders)
-            if bullet.y >=0: # bullet still on the screen
-                draw.line((bullet.x, bullet.y, bullet.x, bullet.y-1), fill = 0)
-            else: # bullet out of display range
+            remove_bullet = enemy_hit_check(bullet, invaders)
+            if (remove_bullet) or bullet.y <0:
                 bullets_index.append(bullet_list.index(bullet))
-        
+            else: # bullet still on the screen and didn't hit an enemy
+                draw.line((bullet.x, bullet.y, bullet.x, bullet.y-1), fill = 0)
+
         # Remove bullets that are out of display's range
         for i in bullets_index:
             bullet_list.pop(i)
-        
         
         # Display image.
         show_image(disp, image)
         
         # increment loops - to keep track on time (each loop is about .01 s)
         loops += 1
+
 # Press CTRL+C to stop the game
 except KeyboardInterrupt:
     # Draw welcome screen
