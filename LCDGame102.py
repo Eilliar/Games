@@ -89,7 +89,7 @@ def enemy_list():
     Creates a list with all enemies in the game
     """
     enemies = []
-    for i in range(0, 10): 
+    for i in range(0, 8): 
         enemies.append(Enemy(np.array([i*5+i*3,2]))) 
     return enemies
     
@@ -185,6 +185,7 @@ draw.rectangle((0,0, w-1, h-1), outline = 255, fill = 255)
 # Main Loop
 ###############################################
 invaders = enemy_list()
+loops = 0
 try:
     while (True):
         # Welcome Screen
@@ -203,7 +204,12 @@ try:
             left_button_callback()
         if (GPIO.input(right) == False):
             right_button_callback()
-            
+        # Move Enemies at each 1s
+        if (loops == 10):
+            loops = 0
+            for enemy in invaders:
+                enemy.move(1,0)
+        
         # Clear Display before making a new frame
         draw.rectangle((0,0, w-1,h-1), outline=0, fill=255)
         # Draw the ship
@@ -226,7 +232,9 @@ try:
         
         # Display image.
         show_image(disp, image)
-
+        
+        # increment loops
+        loops += 1
 # Press CTRL+C to stop the game
 except KeyboardInterrupt:
     # Draw welcome screen
