@@ -42,7 +42,8 @@ class Enemy:
         assert type(position) is np.ndarray, "Position must be an numpy array."
         self.position = position
         self.vertices = (position[0],position[1], position[0]+5, position[1]+5)
-
+        self.alive = True
+        
     def move(self, delta_x, delta_y):
         self.position += np.array([delta_x,delta_y])
         self.vertices = (self.position[0],self.position[1], self.position[0]+5, self.position[1]+5)
@@ -84,6 +85,16 @@ nave = Ship(np.array([w/2,h-8]), 0.)
 ###############################################
 # Functions
 ###############################################
+def enemy_hit_check(bullet, target):
+    for enemy in target:
+        if enemy.alive:
+            enemy_pos = np.array([enemy.position[0]+2.5, enemy.position[1]+2.5])
+            bullet_pos = np.array([bullet.x, bullet.y])
+            distance = np.sqrt((enemy_pos[0]-bullet_pos[0])**2 + (enemy_pos[1]-bullet_pos[1])**2)
+            if distance <= 2.5:
+                enemy.alive = False
+    return None
+
 def enemy_list():
     """
     Creates a list with all enemies in the game
@@ -226,24 +237,26 @@ try:
         draw.polygon(nave.vertices, outline = 0, fill = 255)
         # Draw Enemy
         for enemy in invaders:
-            draw.rectangle(enemy.vertices, outline = 0, fill = 0)
+            if enemy.alive:
+                draw.rectangle(enemy.vertices, outline = 0, fill = 0)
         #Draw the bulets
         for bullet in bullet_list:
             bullet.move()
+            enemy_hit_check(bullet, invaders)
             if bullet.y >=0: # bullet still on the screen
                 draw.line((bullet.x, bullet.y, bullet.x, bullet.y-1), fill = 0)
             else: # bullet out of display range
                 bullets_index.append(bullet_list.index(bullet))
+        
         # Remove bullets that are out of display's range
         for i in bullets_index:
             bullet_list.pop(i)
         
-        #if debug: print bullet_list
         
         # Display image.
         show_image(disp, image)
         
-        # increment loops
+        # increment loops - to keep track on time (each loop is about .01 s)
         loops += 1
 # Press CTRL+C to stop the game
 except KeyboardInterrupt:
