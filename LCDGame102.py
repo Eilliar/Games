@@ -214,6 +214,7 @@ try:
                 Welcome = False
                 
         bullets_index = []
+        enemies_index = []
         # Check left and right buttons and move the ship
         if (GPIO.input(left) == False):
             left_button_callback()
@@ -241,6 +242,8 @@ try:
         for enemy in invaders:
             if enemy.alive:
                 draw.rectangle(enemy.vertices, outline = 0, fill = 0)
+            else:
+                enemies_index.append(invaders.index(enemy))
         #Draw the bulets
         for bullet in bullet_list:
             bullet.move()
@@ -253,11 +256,13 @@ try:
         # Remove bullets that are out of display's range
         for i in bullets_index:
             bullet_list.pop(i)
-        
+        # Remove enemies that where destroyed
+        for k in enemies_index:
+            invaders.pop(k)
         # Display image.
         show_image(disp, image)
         
-        # increment loops - to keep track on time (each loop is about .01 s)
+        # increment loops - to keep track on time (each loop takes about .01 s)
         loops += 1
 
 # Press CTRL+C to stop the game
