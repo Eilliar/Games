@@ -197,7 +197,7 @@ draw.rectangle((0,0, w-1, h-1), outline = 255, fill = 255)
 ###############################################
 # Main Loop
 ###############################################
-invaders = enemy_list()
+
 loops = 0
 move_x = 0
 move_y = 0
@@ -205,6 +205,8 @@ try:
     while (True):
         # Welcome Screen
         while (Welcome):
+            invaders = enemy_list()
+            bullet_list = []
             # Draw welcome screen
             welcome_draw(draw)
             # Display image.
@@ -212,7 +214,7 @@ try:
             if (GPIO.input(b_button) == False):
                 if debug: print "B pressed"
                 Welcome = False
-                
+
         bullets_index = []
         enemies_index = []
         # Check left and right buttons and move the ship
@@ -264,6 +266,9 @@ try:
         
         # increment loops - to keep track on time (each loop takes about .01 s)
         loops += 1
+        
+        if len(invaders) == 0:
+            Welcome = True
 
 # Press CTRL+C to stop the game
 except KeyboardInterrupt:
